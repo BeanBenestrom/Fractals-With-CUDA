@@ -172,44 +172,55 @@ void Window::render()
 		Timer timer;
 		fractal->calculate(x, y, zoom, variable.x, variable.y, mandel);
 	}
-
-	for (int i = 0; i < h; i++)
 	{
-		for (int j = 0; j < w; j++)
+		Timer timer;
+		for (int i = 0; i < h; i++)
 		{
-			// int iteration = sin(fractal->getPixel(j, i) * 0.5 + 0.5) * 255;
-			float value = (-cos(fractal->getPixel(j, i) * 0.05) * 0.5 + 0.5) * 255 / (float)255 * M_PI;
-			// int iteration = fractal->getPixel(j, i);
+			for (int j = 0; j < w; j++)
+			{
+				// int iteration = sin(fractal->getPixel(j, i) * 0.5 + 0.5) * 255;
+				float value = (-cos(fractal->getPixel(j, i) * 0.05) * 0.5 + 0.5) * 255 / (float)255 * M_PI;
+				//int iteration = fractal->getPixel(j, i);
 
-			int r = abs(cos(value)) * 255;
-			int g = sin(value) * 255;
-			int b = abs(cos(value)) * 255;
+				int r = abs(cos(value)) * 255;
+				int g = sin(value) * 255;
+				int b = abs(cos(value)) * 255;
 
-			if (value < M_PI * 0.5) { b = 0; }
-			else { r = 0; }
+				if (value < M_PI * 0.5) { b = 0; }
+				else { r = 0; }
 
-			if (value == 0) { b = 0; r = 0; g = 0; }
+				if (value == 0) { b = 0; r = 0; g = 0; }
 
-			SDL_SetRenderDrawColor(renderer, r, g, b, 0);
-			SDL_RenderDrawPoint(renderer, j, i);
+
+				//float value = (cos(fractal->getPixel(j, i) * 0.05) * 0.5 + 0.5) * 255;
+
+				//int r = 255 - value;
+				//int g = (255 - value) * 0.4; // 127.5
+				//int b = 0;
+
+				/*if (value == 0) { b = 0; r = 0; g = 0; }*/
+
+				SDL_SetRenderDrawColor(renderer, r, g, b, 0);
+				SDL_RenderDrawPoint(renderer, j, i);
+			}
 		}
+
+		if (mouseSetting == mouseSettings::MORPH)
+		{
+			SV2D dot = worldToScreen(variable.x, variable.y);
+
+			SDL_Rect rect;
+			rect.w = 5;
+			rect.h = 5;
+			rect.x = (int)dot.x;
+			rect.y = (int)dot.y;
+
+			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+			SDL_RenderDrawRect(renderer, &rect);
+		}
+
+		SDL_RenderPresent(renderer);
 	}
-
-	if (mouseSetting == mouseSettings::MORPH)
-	{
-		SV2D dot = worldToScreen(variable.x, variable.y);
-
-		SDL_Rect rect;
-		rect.w = 5;
-		rect.h = 5;
-		rect.x = (int)dot.x;
-		rect.y = (int)dot.y;
-
-		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-		SDL_RenderDrawRect(renderer, &rect);
-	}
-
-	SDL_RenderPresent(renderer);
 }
 
 
